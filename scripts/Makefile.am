@@ -37,6 +37,7 @@ LIBRARY = \
 	library/term_colors.sh
 
 LIBMAKEPKG = \
+	libmakepkg/downloads.sh \
 	libmakepkg/utils.sh
 
 # Files that should be removed, but which Automake does not know.
@@ -92,6 +93,7 @@ $(LIBMAKEPKG): Makefile
 	@$(BASH_SHELL) -O extglob -n $@
 
 libmakepkg: \
+	$(srcdir)/libmakepkg/downloads.sh \
 	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh
 
@@ -142,6 +144,7 @@ makepkg-wrapper: \
 	Makefile \
 	$(srcdir)/makepkg-wrapper.sh.in \
 	$(srcdir)/makepkg.sh.in \
+	$(srcdir)/libmakepkg/downloads.sh \
 	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh \
 	| makepkg
@@ -160,6 +163,7 @@ install-data-hook:
 		$(RM) makepkg makepkg-wrapper
 	$(INSTALL) .lib/makepkg $(DESTDIR)$(bindir)/makepkg
 	$(AM_V_at)$(MKDIR_P) $(DESTDIR)$(libmakepkgdir)
+	$(INSTALL) libmakepkg/downloads.sh $(DESTDIR)$(libmakepkgdir)/downloads.sh
 	$(INSTALL) libmakepkg/utils.sh $(DESTDIR)$(libmakepkgdir)/utils.sh
 	cd $(DESTDIR)$(bindir) && \
 		$(RM) repo-elephant && \

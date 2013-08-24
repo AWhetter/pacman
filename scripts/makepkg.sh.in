@@ -95,6 +95,7 @@ PACMAN_OPTS=
 
 shopt -s extglob
 
+source $LIBRARY/downloads.sh
 source $LIBRARY/utils.sh
 
 # PROGRAM START
