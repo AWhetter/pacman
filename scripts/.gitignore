@@ -8,3 +8,4 @@ pkgdelta
 repo-add
 repo-elephant
 repo-remove
+libmakepkg/utils.sh

@@ -36,13 +36,16 @@ LIBRARY = \
 	library/size_to_human.sh \
 	library/term_colors.sh
 
+LIBMAKEPKG = \
+	libmakepkg/utils.sh
+
 # Files that should be removed, but which Automake does not know.
 MOSTLYCLEANFILES = $(bin_SCRIPTS)
 
 libmakepkgdir = $(libdir)/makepkg
 
 clean-local:
-	$(AM_V_at)$(RM) -r .lib
+	$(AM_V_at)$(RM) -r .lib $(LIBMAKEPKG)
 
 if USE_GIT_VERSION
 GIT_VERSION := $(shell sh -c 'git describe --abbrev=4 --dirty | sed s/^v//')
@@ -83,10 +86,19 @@ $(OURSCRIPTS): Makefile
 	$(AM_V_at)chmod +x,a-w $@
 	@$(BASH_SHELL) -O extglob -n $@
 
-makepkg: \
-	$(srcdir)/makepkg.sh.in \
-	$(srcdir)/makepkg-wrapper.sh.in \
+$(LIBMAKEPKG): Makefile
+	$(AM_V_at)$(RM) $@
+	$(AM_V_GEN)test -f $(srcdir)/$@.in && m4 -P -I $(srcdir) $(srcdir)/$@.in | $(edit) >$@
+	@$(BASH_SHELL) -O extglob -n $@
+
+libmakepkg: \
+	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh
+
+makepkg: \
+	libmakepkg \
+	$(srcdir)/makepkg.sh.in \
+	$(srcdir)/makepkg-wrapper.sh.in
 
 makepkg-template: \
 	$(srcdir)/makepkg-template.pl.in \
@@ -130,6 +142,7 @@ makepkg-wrapper: \
 	Makefile \
 	$(srcdir)/makepkg-wrapper.sh.in \
 	$(srcdir)/makepkg.sh.in \
+	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh \
 	| makepkg
 	$(AM_V_at)$(MKDIR_P) .lib
@@ -146,6 +159,8 @@ install-data-hook:
 	cd $(DESTDIR)$(bindir) && \
 		$(RM) makepkg makepkg-wrapper
 	$(INSTALL) .lib/makepkg $(DESTDIR)$(bindir)/makepkg
+	$(AM_V_at)$(MKDIR_P) $(DESTDIR)$(libmakepkgdir)
+	$(INSTALL) libmakepkg/utils.sh $(DESTDIR)$(libmakepkgdir)/utils.sh
 	cd $(DESTDIR)$(bindir) && \
 		$(RM) repo-elephant && \
 		( $(LN_S) repo-add repo-elephant || \
@@ -160,5 +175,6 @@ install-data-hook:
 uninstall-hook:
 	cd $(DESTDIR)$(bindir) && \
 		$(RM) repo-remove repo-elephant
+	$(RM) -r $(DESTDIR)$(libmakepkgdir)
 
 # vim:set ts=2 sw=2 noet:
