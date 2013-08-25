@@ -38,6 +38,7 @@ LIBRARY = \
 
 LIBMAKEPKG = \
 	libmakepkg/downloads.sh \
+	libmakepkg/extractions.sh \
 	libmakepkg/utils.sh
 
 # Files that should be removed, but which Automake does not know.
@@ -94,6 +95,7 @@ $(LIBMAKEPKG): Makefile
 
 libmakepkg: \
 	$(srcdir)/libmakepkg/downloads.sh \
+	$(srcdir)/libmakepkg/extractions.sh \
 	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh
 
@@ -145,6 +147,7 @@ makepkg-wrapper: \
 	$(srcdir)/makepkg-wrapper.sh.in \
 	$(srcdir)/makepkg.sh.in \
 	$(srcdir)/libmakepkg/downloads.sh \
+	$(srcdir)/libmakepkg/extractions.sh \
 	$(srcdir)/libmakepkg/utils.sh \
 	$(srcdir)/library/parseopts.sh \
 	| makepkg
@@ -164,6 +167,7 @@ install-data-hook:
 	$(INSTALL) .lib/makepkg $(DESTDIR)$(bindir)/makepkg
 	$(AM_V_at)$(MKDIR_P) $(DESTDIR)$(libmakepkgdir)
 	$(INSTALL) libmakepkg/downloads.sh $(DESTDIR)$(libmakepkgdir)/downloads.sh
+	$(INSTALL) libmakepkg/extractions.sh $(DESTDIR)$(libmakepkgdir)/extractions.sh
 	$(INSTALL) libmakepkg/utils.sh $(DESTDIR)$(libmakepkgdir)/utils.sh
 	cd $(DESTDIR)$(bindir) && \
 		$(RM) repo-elephant && \
